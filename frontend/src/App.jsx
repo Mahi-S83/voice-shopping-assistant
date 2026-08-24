@@ -38,41 +38,48 @@ function App() {
 // ✅ Add this function
 const handleRemoveItem = async (itemId) => {
   console.log('🗑️ handleRemoveItem called with:', itemId);
+
   if (!itemId) {
     console.error('❌ itemId is undefined!');
     return false;
   }
+
   try {
     const response = await fetch(`${API_BASE}/api/list/${itemId}`, {
       method: 'DELETE'
     });
+
     if (response.ok) {
       await loadList();
       return true;
     }
+
     return false;
   } catch (error) {
     console.error('Error removing item:', error);
     return false;
   }
 };
-
 const handleMarkBought = async (itemId) => {
   console.log('🔄 handleMarkBought called with:', itemId);
+
   if (!itemId) {
     console.error('❌ itemId is undefined!');
     return false;
   }
+
   try {
     const response = await fetch(`${API_BASE}/api/list/${itemId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ isBought: true })
     });
+
     if (response.ok) {
       await loadList();
       return true;
     }
+
     return false;
   } catch (error) {
     console.error('Error marking item:', error);
@@ -121,7 +128,7 @@ const handleMarkBought = async (itemId) => {
       
       if (event.results[event.results.length - 1].isFinal) {
         try {
-          const response = await fetch(`${API_BASE}/api/list/${itemId}`, {
+          const response = await fetch(`${API_BASE}/api/parse`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text: finalTranscript, language: 'en' })
