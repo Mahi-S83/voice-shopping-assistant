@@ -8,6 +8,6 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "https://saathi-backend-d416.onrender.com/api"
+    "VITE_API_URL": "https://saathi-backend-d416.onrender.com"
   }
 }
