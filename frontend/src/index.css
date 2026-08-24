@@ -1,0 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-paper: #F3F6F1;
+  --color-paper-raised: #FFFFFF;
+  --color-ink: #1F2A24;
+  --color-ink-soft: #5B6459;
+  --color-ink-faint: #8A9086;
+  --color-marigold: #E8A33D;
+  --color-marigold-deep: #C77F1F;
+  --color-mint: #2F6B4F;
+  --color-mint-soft: #DCEDE2;
+  --color-tomato: #D6553F;
+  --color-tomato-soft: #F6E1DC;
+  --color-saffron-soft: #FBEBD2;
+  --color-lilac-soft: #EAE3F3;
+  --color-lilac: #8567AD;
+  --color-line: #E4E3D9;
+
+  /* Fonts */
+  --font-baloo: 'Baloo 2', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* Animations */
+  --animate-card-glide: card-glide 0.6s cubic-bezier(0.2, 0.85, 0.3, 1) forwards;
+  --animate-pop-in: pop-in 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+  --animate-float-emoji: float-emoji 3.4s ease-in-out infinite;
+  --animate-ripple: ripple 1.8s ease-out infinite;
+  --animate-drift: drift 9s ease-in-out infinite;
+  --animate-bob: bob 2.6s ease-in-out infinite;
+  --animate-blink: blink 1s infinite;
+  --animate-slide-up: slide-up 0.4s cubic-bezier(0.2, 0.85, 0.3, 1) forwards;
+
+  /* Shadows */
+  --shadow-card: 0 18px 40px -18px rgba(31, 42, 36, 0.28);
+}
+
+@keyframes card-glide {
+  0% { opacity: 0; transform: translateY(24px) scale(0.94); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes float-emoji {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-7px) rotate(3deg); }
+}
+
+@keyframes ripple {
+  0% { width: 70px; height: 70px; opacity: 0.55; }
+  100% { width: 140px; height: 140px; opacity: 0; }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(8px, -14px) rotate(8deg); }
+  66% { transform: translate(-6px, -6px) rotate(-6deg); }
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes blink {
+  50% { opacity: 0.2; }
+}
+
+@keyframes slide-up {
+  0% { transform: translateY(105%); }
+  100% { transform: translateY(0); }
+}
+
+@layer base {
+  html, body {
+    background:
+      radial-gradient(1200px 600px at 15% -10%, #FBF3E3 0%, transparent 55%),
+      radial-gradient(900px 500px at 110% 10%, #E3EFE6 0%, transparent 50%),
+      #EDEEE6;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@layer components {
+  .phone-frame {
+    width: 390px;
+    height: 800px;
+    background: var(--color-paper);
+    border-radius: 44px;
+    box-shadow: var(--shadow-card), 0 0 0 10px #14201A, 0 0 0 11px #2B3B31;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 26px;
+    background: #14201A;
+    border-radius: 0 0 18px 18px;
+    z-index: 40;
+  }
+
+  .stat-pill {
+    background: var(--color-paper-raised);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    padding: 10px 12px;
+    flex: 1;
+  }
+
+  .stat-pill .num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  .stat-pill .lbl {
+    font-size: 10.5px;
+    color: var(--color-ink-faint);
+    margin-top: 2px;
+  }
+
+  .item-row {
+    background: var(--color-paper-raised);
+    border: 1px solid var(--color-line);
+    border-radius: 16px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    transition: transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1);
+  }
+
+  .item-row:hover {
+    transform: translateY(-6px);
+  }
+
+  .item-row.new {
+    animation: pop-in 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+    border-color: var(--color-marigold);
+    box-shadow: 0 0 0 3px var(--color-saffron-soft);
+  }
+
+  .item-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    border: 2px solid var(--color-line);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .item-check.checked {
+    border-color: var(--color-mint);
+    background: var(--color-mint);
+  }
+
+  .item-check.checked::after {
+    content: "";
+    width: 5px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-top: -2px;
+  }
+
+  .category-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .category-dot.produce { background: var(--color-tomato); }
+  .category-dot.dairy { background: var(--color-marigold); }
+  .category-dot.staples { background: var(--color-mint); }
+  .category-dot.bakery { background: #D4A373; }
+  .category-dot.default { background: var(--color-ink-faint); }
+
+  /* Filter chips */
+  .filter-chip {
+    flex-shrink: 0;
+    border: 1.5px solid var(--color-line);
+    background: var(--color-paper-raised);
+    color: var(--color-ink-soft);
+    border-radius: 20px;
+    padding: 7px 13px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-chip.active {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    border-color: var(--color-ink);
+  }
+
+  /* Status chips - different from filter chips */
+  .status-chip {
+    flex-shrink: 0;
+    border-radius: 20px;
+    padding: 8px 13px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-chip.low {
+    background: var(--color-tomato-soft);
+    color: var(--color-tomato);
+  }
+
+  .status-chip.season {
+    background: var(--color-saffron-soft);
+    color: var(--color-marigold-deep);
+  }
+
+  .status-chip.suggestion {
+    background: var(--color-mint-soft);
+    color: var(--color-mint);
+  }
+}

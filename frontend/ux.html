@@ -1,0 +1,174 @@
+<script>
+  // ---- Tab navigation with glide ----
+  const tabs = document.querySelectorAll('.tab-btn');
+  const screens = { list: document.getElementById('screen-list'), search: document.getElementById('screen-search'), recs: document.getElementById('screen-recs') };
+  const order = ['list','search','recs'];
+  const indicator = document.getElementById('tab-indicator');
+  const dock = document.getElementById('dock');
+  let current = 'list';
+
+  function setIndicator(idx){
+    indicator.style.transform = `translateX(${idx * 100}%)`;
+  }
+
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.screen;
+      if (target === current) return;
+      const fromIdx = order.indexOf(current);
+      const toIdx = order.indexOf(target);
+      const dir = toIdx > fromIdx ? 1 : -1;
+
+      tabs.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      setIndicator(toIdx);
+
+      const fromEl = screens[current];
+      fromEl.classList.remove('active');
+      fromEl.style.transform = `translateX(${-dir*100}%)`;
+      fromEl.style.opacity = '0';
+
+      const toEl = screens[target];
+      toEl.style.transition = 'none';
+      toEl.style.transform = `translateX(${dir*100}%)`;
+      toEl.style.opacity = '0';
+      requestAnimationFrame(()=>{
+        toEl.style.transition = '';
+        toEl.classList.add('active');
+      });
+
+      dock.style.opacity = target === 'list' ? '1' : '0';
+      dock.style.transition = 'opacity .3s ease';
+
+      if (target === 'search'){
+        document.querySelectorAll('.prod-card').forEach(c=>{
+          c.style.animation = 'none';
+          void c.offsetWidth;
+          c.style.animation = '';
+        });
+      }
+
+      current = target;
+    });
+  });
+
+  // ---- Helper Functions ----
+  function showResult(data) {
+    const parsedTag = document.getElementById('parsed-tag');
+    if (data.result && data.result.success) {
+      parsedTag.textContent = '✓ ' + data.result.message;
+      parsedTag.classList.add('show');
+    } else if (data.result) {
+      parsedTag.textContent = '⚠️ ' + data.result.message;
+      parsedTag.classList.add('show');
+    } else {
+      parsedTag.textContent = '⚠️ Something went wrong';
+      parsedTag.classList.add('show');
+    }
+  }
+
+  function addItemToUI(item) {
+    const newRow = document.getElementById('new-item-row');
+    newRow.style.display = 'flex';
+    newRow.classList.add('new');
+    
+    const nameEl = newRow.querySelector('.item-name');
+    const metaEl = newRow.querySelector('.item-meta');
+    const priceEl = newRow.querySelector('.item-price');
+    
+    if (nameEl) nameEl.textContent = item.productName || 'Item';
+    if (metaEl) metaEl.textContent = `${item.quantity || 1} × ${item.unit || 'pc'}`;
+    if (priceEl) priceEl.textContent = `₹${item.price || '--'}`;
+  }
+
+  function updateStats() {
+    fetch('http://localhost:5001/api/list')
+      .then(res => res.json())
+      .then(data => {
+        const items = data.items || [];
+        document.getElementById('item-count').textContent = items.length;
+        // Total would need product prices - keeping it simple for now
+      })
+      .catch(err => console.error('Error fetching list:', err));
+  }
+
+  // ---- Speech Recognition Setup ----
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'en-IN';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  // ---- DOM Elements ----
+  const phone = document.getElementById('phone');
+  const micBtn = document.getElementById('mic-btn');
+  const transcript = document.getElementById('transcript');
+  const parsedTag = document.getElementById('parsed-tag');
+  const newRow = document.getElementById('new-item-row');
+  const itemCount = document.getElementById('item-count');
+  const estTotal = document.getElementById('est-total');
+  let listening = false;
+
+  // ---- Recognition Handlers ----
+  recognition.onresult = async (event) => {
+    let transcriptText = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      transcriptText += event.results[i][0].transcript;
+      
+      document.getElementById('transcript').innerHTML = transcriptText;
+      
+      if (event.results[i].isFinal) {
+        try {
+          const response = await fetch('http://localhost:5001/api/parse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: transcriptText, language: 'en' })
+          });
+          const data = await response.json();
+          
+          if (data.result && data.result.success) {
+            parsedTag.textContent = '✓ ' + data.result.message;
+            parsedTag.classList.add('show');
+            if (data.result.data && data.result.data.item) {
+              addItemToUI(data.result.data.item);
+              updateStats();
+            }
+          } else {
+            parsedTag.textContent = '⚠️ ' + (data.result ? data.result.message : 'Unknown error');
+            parsedTag.classList.add('show');
+          }
+        } catch (error) {
+          parsedTag.textContent = '⚠️ Could not connect to server. Is backend running?';
+          parsedTag.classList.add('show');
+          console.error('Fetch error:', error);
+        }
+        
+        setTimeout(() => {
+          phone.classList.remove('listening');
+          listening = false;
+        }, 2000);
+      }
+    }
+  };
+
+  recognition.onerror = (event) => {
+    console.error('Speech error:', event.error);
+    parsedTag.textContent = '⚠️ Could not hear you. Try again.';
+    parsedTag.classList.add('show');
+    setTimeout(() => {
+      phone.classList.remove('listening');
+      listening = false;
+    }, 1500);
+  };
+
+  // ---- Mic button click ----
+  micBtn.addEventListener('click', () => {
+    if (listening) return;
+    listening = true;
+    phone.classList.add('listening');
+    transcript.innerHTML = '';
+    parsedTag.classList.remove('show');
+    newRow.style.display = 'none';
+    recognition.start();
+  });
+</script>
