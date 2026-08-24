@@ -72,7 +72,7 @@ export function ShoppingList({ items = [], onToggleBought, onRemove }) {
               }}
             >
               <button
-                onClick={() => onToggleBought(item.id)}
+                onClick={() => onToggleBought(item.id || item._id || `item-${index}`)}
                 style={{
                   width: '22px',
                   height: '22px',
@@ -110,7 +110,7 @@ export function ShoppingList({ items = [], onToggleBought, onRemove }) {
                   </span>
                 )}
                 <button
-                  onClick={() => onRemove(item.id)}
+                  onClick={() => onRemove(item.id || item._id || `item-${index}`)}
                   style={{
                     width: '24px',
                     height: '24px',

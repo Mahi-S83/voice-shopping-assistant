@@ -39,6 +39,7 @@ export function ListScreen({
 
   // ✅ Add this function
 const handleToggleBought = async (itemId) => {
+  console.log('🔍 Toggle bought for:', itemId);
   if (onMarkBought) {
     await onMarkBought(itemId);
   }

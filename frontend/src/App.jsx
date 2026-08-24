@@ -37,6 +37,11 @@ function App() {
 
 // ✅ Add this function
 const handleRemoveItem = async (itemId) => {
+  console.log('🗑️ handleRemoveItem called with:', itemId);
+  if (!itemId) {
+    console.error('❌ itemId is undefined!');
+    return false;
+  }
   try {
     const response = await fetch(`${API_BASE}/api/list/${itemId}`, {
       method: 'DELETE'
@@ -52,8 +57,12 @@ const handleRemoveItem = async (itemId) => {
   }
 };
 
-// ✅ Add this function
 const handleMarkBought = async (itemId) => {
+  console.log('🔄 handleMarkBought called with:', itemId);
+  if (!itemId) {
+    console.error('❌ itemId is undefined!');
+    return false;
+  }
   try {
     const response = await fetch(`${API_BASE}/api/list/${itemId}`, {
       method: 'PUT',
