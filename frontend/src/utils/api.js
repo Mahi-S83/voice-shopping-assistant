@@ -14,11 +14,6 @@ export async function getShoppingList() {
   return response.json();
 }
 
-export async function refreshList() {
-  const response = await fetch(`${API_BASE}/api/list`);
-  return response.json();
-}
-
 export async function addItemToList(productName, quantity = 1, unit = '') {
   const response = await fetch(`${API_BASE}/api/list`, {
     method: 'POST',
@@ -39,17 +34,7 @@ export async function searchProducts(query) {
   const response = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
   return response.json();
 }
-// Voice search with NLP
-export async function voiceSearch(text) {
-  const response = await fetch(`${API_BASE}/api/search/voice`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text })
-  });
-  return response.json();
-}
 
-// Search with filters
 export async function searchProductsWithFilters(query, filters = {}) {
   const params = new URLSearchParams({ q: query });
   if (filters.brand) params.append('brand', filters.brand);

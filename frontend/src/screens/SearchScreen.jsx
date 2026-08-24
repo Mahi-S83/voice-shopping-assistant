@@ -82,16 +82,19 @@ export function SearchScreen({ isActive }) {
       }
       
       if (finalText) {
-        console.log('🎤 Voice search text:', finalText);
-        setIsSearchListening(false);
-        
-        try {
-          setLoading(true);
-          const response = await fetch('http://localhost:5001/api/search/voice', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: finalText })
-          });
+  console.log('🎤 Voice search text:', finalText);
+  setIsSearchListening(false);
+  
+  // ✅ Add this line
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+  
+  try {
+    setLoading(true);
+    const response = await fetch(`${API_BASE}/api/search/voice`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: finalText })
+    });
           const data = await response.json();
           
           console.log('📦 Voice search response:', data);

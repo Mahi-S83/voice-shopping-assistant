@@ -6,6 +6,7 @@ import { TabBar } from './components/TabBar';
 import { MicButton } from './components/MicButton';
 import { getShoppingList } from './utils/api';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 function App() {
   const [activeTab, setActiveTab] = useState('list');
   const [isListening, setIsListening] = useState(false);
@@ -37,7 +38,7 @@ function App() {
 // ✅ Add this function
 const handleRemoveItem = async (itemId) => {
   try {
-    const response = await fetch(`http://localhost:5001/api/list/${itemId}`, {
+    const response = await fetch(`${API_BASE}/api/list/${itemId}`, {
       method: 'DELETE'
     });
     if (response.ok) {
@@ -54,7 +55,7 @@ const handleRemoveItem = async (itemId) => {
 // ✅ Add this function
 const handleMarkBought = async (itemId) => {
   try {
-    const response = await fetch(`http://localhost:5001/api/list/${itemId}`, {
+    const response = await fetch(`${API_BASE}/api/list/${itemId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ isBought: true })
@@ -111,7 +112,7 @@ const handleMarkBought = async (itemId) => {
       
       if (event.results[event.results.length - 1].isFinal) {
         try {
-          const response = await fetch('http://localhost:5001/api/parse', {
+          const response = await fetch(`${API_BASE}/api/list/${itemId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text: finalTranscript, language: 'en' })
